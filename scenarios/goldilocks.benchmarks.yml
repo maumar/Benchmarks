@@ -5,6 +5,7 @@
 imports:
   - https://github.com/aspnet/Benchmarks/blob/main/scenarios/aspnet.profiles.yml?raw=true
   - https://raw.githubusercontent.com/dotnet/crank/main/src/Microsoft.Crank.Jobs.Wrk/wrk.yml
+  - https://raw.githubusercontent.com/dotnet/crank/main/src/Microsoft.Crank.Jobs.Bombardier/bombardier.yml
   - https://raw.githubusercontent.com/dotnet/crank/main/src/Microsoft.Crank.Jobs.H2Load/h2load.yml
 
 variables:
@@ -65,7 +66,7 @@ scenarios:
         - "/p:StripSymbols=true"
         - "/p:EnableRequestDelegateGenerator=true"
     load:
-      job: wrk
+      job: bombardier
       variables:
         presetHeaders: json
         path: /todos
