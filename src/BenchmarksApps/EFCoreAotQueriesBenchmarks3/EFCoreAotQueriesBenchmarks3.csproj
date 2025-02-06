@@ -18,10 +18,12 @@
   
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="9.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tasks" Version="9.0.1">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1" >
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  <Publish>true</Publish>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tasks" Version="9.0.1" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.10" />
   </ItemGroup>
    

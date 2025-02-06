@@ -1,0 +1,257 @@
+﻿imports:
+  - https://raw.githubusercontent.com/dotnet/crank/main/src/Microsoft.Crank.Jobs.Bombardier/bombardier.yml
+
+jobs:
+  server:
+    source:
+        repository: https://github.com/maumar/Benchmarks.git
+        branchOrCommit: main
+        project: src/BenchmarksApps/EFCoreAotQueriesBenchmarks3/EFCoreAotQueriesBenchmarks3.csproj
+
+scenarios:
+  hello:
+    application:
+      job: server
+      buildArguments: 
+        - "/p:PublishAot=true"
+        - "/p:PublishReadyToRun=true"
+        - "/p:PublishSingleFile=true"         
+    load:
+      job: bombardier
+      variables:
+        serverPort: 5000
+        path: /
+
+profiles:
+  local:
+    variables:
+      serverAddress: localhost
+    jobs: 
+      application:
+        endpoints: 
+          - http://localhost:5010
+      load:
+        endpoints: 
+          - http://localhost:5010
+
+
+# imports:
+    # # - https://github.com/aspnet/Benchmarks/blob/main/scenarios/aspnet.profiles.yml?raw=true
+    # - https://raw.githubusercontent.com/dotnet/crank/main/src/Microsoft.Crank.Jobs.Wrk/wrk.yml    
+
+# #variables:
+# #    serverPort: 5000
+# #    serverScheme: http
+
+# jobs:
+  # efaotquery:
+    # source:
+        # repository: https://github.com/maumar/Benchmarks.git
+        # branchOrCommit: main
+        # project: src/BenchmarksApps/EFCoreAotQueriesBenchmarks2/EFCoreAotQueriesBenchmarks2.csproj
+
+#jobs:
+#  basicminimalapiaspnetbenchmarks:
+#    source:
+#      repository: https://github.com/aspnet/benchmarks.git
+#      branchOrCommit: main
+#      project: src/BenchmarksApps/BasicMinimalApi/BasicMinimalApi.csproj
+#    readyStateText: Application started.
+#    arguments: "--urls {{serverScheme}}://{{serverAddress}}:{{serverPort}}"
+#  todosapiaspnetbenchmarks:
+#    source:
+#      repository: https://github.com/aspnet/benchmarks.git
+#      branchOrCommit: main
+#      project: src/BenchmarksApps/TodosApi/TodosApi.csproj
+#    readyStateText: Application started.
+#    arguments: "--urls {{serverScheme}}://{{serverAddress}}:{{serverPort}}"
+#  basicgrpcaspnetbenchmarks:
+#    source:
+#      repository: https://github.com/aspnet/benchmarks.git
+#      branchOrCommit: main
+#      project: src/BenchmarksApps/Grpc/BasicGrpc/BasicGrpc.csproj
+#    readyStateText: Application started.
+#    arguments: "--urls {{serverScheme}}://{{serverAddress}}:{{serverPort}}"
+#  basicgrpcgobenchmarks:
+#    source:
+#      repository: https://github.com/aspnet/benchmarks.git
+#      branchOrCommit: main
+#      dockerImageName: basic-go-grpc-server
+#      dockerContextDirectory: src/BenchmarksApps/Grpc/BasicGoServer/
+#      dockerFile: src/BenchmarksApps/Grpc/BasicGoServer/Dockerfile
+#    readyStateText: Application started
+#    waitForExit: false
+#    options:
+#      requiredOperatingSystem: linux
+#  postgresql:
+#    source:
+#      repository: https://github.com/TechEmpower/FrameworkBenchmarks.git
+#      branchOrCommit: master
+#      dockerFile: toolset/databases/postgres/postgres.dockerfile
+#      dockerImageName: postgres_te
+#      dockerContextDirectory: toolset/databases/postgres
+#    readyStateText: ready to accept connections
+#    noClean: true
+
+
+# scenarios:
+  # efquerypublishaot:
+    # application:
+      # job: efaotquery
+      # buildArguments: 
+        # - "/p:PublishAot=true"
+        # - "/p:PublishReadyToRun=true"
+        # - "/p:PublishSingleFile=true"        
+    # load:
+      # job: wrk
+      # variables:
+        # presetheaders: json
+        # path: /efaotqueries
+
+# profiles:
+  # local:
+    # variables:
+      # serverAddress: localhost
+    # jobs: 
+      # application:
+        # endpoints: 
+          # - http://localhost:5010
+      # load:
+        # endpoints: 
+          # - http://localhost:5010
+
+#  basicminimalapipublishtrimr2rsinglefile:
+#    application:
+#      job: basicminimalapiaspnetbenchmarks
+#      buildArguments: 
+#        - "/p:PublishTrimmed=true"
+#        - "/p:PublishReadyToRun=true"
+#        - "/p:PublishSingleFile=true"
+#        - "/p:TrimMode=full"
+#        - "/p:EnableRequestDelegateGenerator=true"
+#    load:
+#      job: wrk
+#      variables:
+#        presetHeaders: json
+#        path: /todos
+#
+#  basicminimalapivanilla:
+#    application:
+#      job: basicminimalapiaspnetbenchmarks
+#    load:
+#      job: wrk
+#      variables:
+#        presetHeaders: json
+#        path: /todos
+#
+#  todosapipublishaot:
+#    db:
+#      job: postgresql
+#    application:
+#      job: todosapiaspnetbenchmarks
+#      buildArguments: 
+#        - "/p:PublishAot=true"
+#        - "/p:StripSymbols=true"
+#      environmentVariables:
+#        APPSETTINGS__CONNECTIONSTRING: Server={{databaseServer}};Database=hello_world;User Id=benchmarkdbuser;Password=benchmarkdbpass;Maximum Pool Size=256;NoResetOnClose=true;Enlist=false;Max Auto Prepare=4
+#    load:
+#      job: wrk
+#      variables:
+#        presetHeaders: json
+#        path: /api/todos
+
+#  todosapipublishtrimr2rsinglefile:
+#    db:
+#      job: postgresql
+#    application:
+#      job: todosapiaspnetbenchmarks
+#      buildArguments: 
+#        - "/p:PublishAot=false"
+#        - "/p:PublishTrimmed=true"
+#        - "/p:PublishReadyToRun=true"
+#        - "/p:PublishSingleFile=true"
+#        - "/p:TrimMode=full"
+#        - "/p:EnableRequestDelegateGenerator=true"
+#      environmentVariables:
+#        APPSETTINGS__CONNECTIONSTRING: Server={{databaseServer}};Database=hello_world;User Id=benchmarkdbuser;Password=benchmarkdbpass;Maximum Pool Size=256;NoResetOnClose=true;Enlist=false;Max Auto Prepare=4
+#    load:
+#      job: wrk
+#      variables:
+#        presetHeaders: json
+#        path: /api/todos
+
+#  todosapivanilla:
+#    db:
+#      job: postgresql
+#    application:
+#      job: todosapiaspnetbenchmarks
+#      buildArguments: 
+#        - "/p:PublishAot=false"
+#        - "/p:EnableRequestDelegateGenerator=false"
+#      environmentVariables:
+#        APPSETTINGS__CONNECTIONSTRING: Server={{databaseServer}};Database=hello_world;User Id=benchmarkdbuser;Password=benchmarkdbpass;Maximum Pool Size=256;NoResetOnClose=true;Enlist=false;Max Auto Prepare=4
+#    load:
+#      job: wrk
+#      variables:
+#        presetHeaders: json
+#        path: /api/todos
+
+#  basicgrpcpublishaot:
+#    application:
+#      job: basicgrpcaspnetbenchmarks
+#      buildArguments: 
+#        - "/p:PublishAot=true"
+#        - "/p:StripSymbols=true"
+#    load:
+#      job: h2LoadClient
+#      variables:
+#        presetHeaders: grpc
+#        path: /basic.TodoService/GetAllTodos
+#        body: AAAAAAA=
+#        connections: 28
+#        threads: 28
+#        streams: 70
+
+#  basicgrpcpublishtrimr2rsinglefile:
+#    application:
+#      job: basicgrpcaspnetbenchmarks
+#      buildArguments: 
+#        - "/p:PublishTrimmed=true"
+#        - "/p:PublishReadyToRun=true"
+#        - "/p:PublishSingleFile=true"
+#        - "/p:TrimMode=full"
+#    load:
+#      job: h2LoadClient
+#      variables:
+#        presetHeaders: grpc
+#        path: /basic.TodoService/GetAllTodos
+#        body: AAAAAAA=
+#        connections: 28
+#        threads: 28
+#        streams: 70
+
+#  basicgrpcvanilla:
+#    application:
+#      job: basicgrpcaspnetbenchmarks
+#    load:
+#      job: h2LoadClient
+#      variables:
+#        presetHeaders: grpc
+#        path: /basic.TodoService/GetAllTodos
+#        body: AAAAAAA=
+#        connections: 28
+#        threads: 28
+#        streams: 70
+
+#  basicgrpcgo:
+#    application:
+#      job: basicgrpcgobenchmarks
+#    load:
+#      job: h2LoadClient
+#      variables:
+#        presetHeaders: grpc
+#        path: /basic.TodoService/GetAllTodos
+#        body: AAAAAAA=
+#        connections: 28
+#        threads: 28
+#        streams: 70
